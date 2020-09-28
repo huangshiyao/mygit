@@ -1,10 +1,13 @@
+#include <list>
 #include <QPushButton>
 #include "msgbox.h"
 #include "ui_msgbox.h"
 
-QList<MsgBox *> MsgBox::ls;
+using namespace std;
 
-MsgBox::MsgBox(QWidget *parent) :
+list<MsgBox *> MsgBox::ls;
+
+MsgBox::MsgBox(int btn, QWidget *parent) :
     QDialog(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);  //禁用对话框边框及控件
@@ -12,8 +15,17 @@ MsgBox::MsgBox(QWidget *parent) :
     ui.setupUi(this);
     ls.push_back(this);
 
-    connect(ui.pushButton_2, &QPushButton::clicked, [=]{access=true; close();});
-    connect(ui.pushButton, &QPushButton::clicked, [=]{access=false; close();});
+    if(btn==1)
+    {
+        ui.pushButton->close();
+        ui.pushButton_2->move(160, ui.pushButton_2->y());
+        connect(ui.pushButton_2, &QPushButton::clicked, this, &MsgBox::close);
+    }
+    if(btn==2)
+    {
+        connect(ui.pushButton_2, &QPushButton::clicked, [&]{access=true; close();});
+        connect(ui.pushButton, &QPushButton::clicked, [&]{access=false; close();});
+    }
 }
 
 MsgBox::~MsgBox()
@@ -37,14 +49,21 @@ MsgBox *MsgBox::act()
     return ls.back();
 }
 
-void MsgBox::pop(const QString &msg, msgType type)
+void MsgBox::throwBox1(const QString &msg, msgType type)
 {
-    MsgBox *box=new MsgBox(QApplication::activeWindow());
+    MsgBox *box=new MsgBox(1, QApplication::activeWindow());
     box->setMsg(msg, type);
     box->show();
 }
 
-bool MsgBox::wait()
+void MsgBox::throwBox2(const QString &msg, msgType type)
+{
+    MsgBox *box=new MsgBox(2, QApplication::activeWindow());
+    box->setMsg(msg, type);
+    box->show();
+}
+
+bool MsgBox::catchBox()
 {
     if(MsgBox::act()==nullptr)
         return false;
