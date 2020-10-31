@@ -27,4 +27,6 @@ struct datetime_t
 
 int chk_datetime(struct datetime_t *datetime);
 
+int copy(const char *name, const char *name_copy);
+
 #endif /*BASEFUNC*/

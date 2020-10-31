@@ -8,6 +8,7 @@ CONFIG += c++11
 
 SOURCES += \
         datetime.c \
+        file.c \
         list.c
 
 HEADERS += \
